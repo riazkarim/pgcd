@@ -1,7 +1,5 @@
-﻿using Flurl.Http;
-
-using Microsoft.AspNetCore.Mvc;
-
+﻿using Microsoft.AspNetCore.Mvc;
+using PaymentGateway.Api.Helpers;
 using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
@@ -68,10 +66,11 @@ public class PaymentsController : Controller
                     status = PaymentStatus.Declined;
                 }
             }
-            catch (PaymentRejectedException ex)
+            catch (AcquiringBankUnavailable ex)
             {
-                _logger.LogError(ex, ex.Message);
-                status = PaymentStatus.Rejected;
+                _logger.LogCritical(ex, ex.Message);
+                // If we can't reach the acquiring bank, we return the error to the merchant, as this is a critical non-recoverable failure
+                return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
 
             try
@@ -84,6 +83,8 @@ public class PaymentsController : Controller
             {
                 // This is a critical error as the transaction may have been submitted to the acquiring bank, but the merchant might
                 // not have a way to retrieve these details. This kind of error should be alerted to the support team to investigate.
+                // We should still return the acquiring bank response to the user so they can be alerted too on the status of their transaction.
+                // They won't have an ID in this case for now, until our dev team fixes the data.
                 _logger.LogCritical(ex,
                     $"Error when persisting payment details to repository. This means something was submitted to the acquiring bank but may not be stored in the data store. Auth: {abResponse.Authorized}, AuthCode: {abResponse.AuthorizationCode}");
             }

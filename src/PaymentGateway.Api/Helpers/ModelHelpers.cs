@@ -1,8 +1,9 @@
+using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Data;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 
-namespace PaymentGateway.Api.Models;
+namespace PaymentGateway.Api.Helpers;
 
 public static class ModelHelpers
 {

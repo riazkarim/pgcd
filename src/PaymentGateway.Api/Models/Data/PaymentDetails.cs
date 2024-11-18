@@ -1,13 +1,13 @@
 namespace PaymentGateway.Api.Models.Data;
 
-public class PaymentDetails
+public record PaymentDetails
 {
-    public string CardNumberLastFour { get; set; }
-    public int ExpiryMonth { get; set; }
-    public int ExpiryYear { get; set; }
-    public string Cvv { get; set; }
-    public string Currency { get; set; }
-    public int Amount { get; set; }
-    public PaymentStatus Status { get; set; }
-    public Guid AuthorizationCode { get; set; }
+    public string CardNumberLastFour { get; init; }
+    public int ExpiryMonth { get; init; }
+    public int ExpiryYear { get; init; }
+    public string Cvv { get; init; }
+    public string Currency { get; init; }
+    public int Amount { get; init; }
+    public PaymentStatus Status { get; init; }
+    public Guid AuthorizationCode { get; init; }
 }
