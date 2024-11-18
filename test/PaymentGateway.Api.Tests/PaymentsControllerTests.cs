@@ -3,30 +3,31 @@ using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
+using Moq;
+
+using NUnit.Framework;
+
 using PaymentGateway.Api.Controllers;
 using PaymentGateway.Api.Helpers;
-using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
 
 namespace PaymentGateway.Api.Tests;
 
+[TestFixture]
 public class PaymentsControllerTests
 {
-    private readonly Random _random = new();
+    [SetUp]
+    public void SetUp()
+    {
+        
+    }
     
-    [Fact]
-    public async Task RetrievesAPaymentSuccessfully()
+    [Test]
+    public async Task Should_RetrievesAPaymentSuccessfully()
     {
         // Arrange
-        var payment = new PostPaymentResponse
-        {
-            ExpiryYear = _random.Next(2023, 2030),
-            ExpiryMonth = _random.Next(1, 12),
-            Amount = _random.Next(1, 10000),
-            CardNumberLastFour = _random.Next(1111, 9999).ToString(),
-            Currency = "GBP"
-        };
+        var payment = TestObjects.PostPaymentResponse;
 
         var paymentsRepository = new PaymentsRepository();
         var ppd = await paymentsRepository.AddAsync(payment.ToPaymentDetails());
@@ -42,12 +43,12 @@ public class PaymentsControllerTests
         var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
         
         // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        Assert.NotNull(paymentResponse);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
+        Assert.That(paymentResponse, Is.Not.Null);
     }
 
-    [Fact]
-    public async Task Returns404IfPaymentNotFound()
+    [Test]
+    public async Task Should_Return404_IfPaymentNotFound()
     {
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
@@ -57,6 +58,23 @@ public class PaymentsControllerTests
         var response = await client.GetAsync($"/api/Payments/{Guid.NewGuid()}");
         
         // Assert
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
+    }
+
+    [Test]
+    public async Task Should_ThrowError_IfInvalidModel()
+    {
+        var abMock = new Mock<IAcquiringBankService>();
+        
+        var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
+        var client = webApplicationFactory.WithWebHostBuilder(builder =>
+                builder.ConfigureServices(services => ((ServiceCollection)services)
+                    .AddSingleton<IPaymentsRepository>(new PaymentsRepository())
+                    .AddSingleton<IAcquiringBankService>(abMock.Object)))
+            .CreateClient();
+
+        // Act
+        var response = await client.PostAsJsonAsync($"/api/payments", TestObjects.InvalidPostPaymentRequest);
+        Console.WriteLine(response);
     }
 }

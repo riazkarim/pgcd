@@ -19,10 +19,10 @@ public static class ModelHelpers
         };
     }
 
-    public static PaymentDetails ToPaymentDetails(this PostPaymentRequest request, PaymentStatus status,
+    public static PaymentDetail ToPaymentDetails(this PostPaymentRequest request, PaymentStatus status,
         string authorizationCode)
     {
-        return new PaymentDetails()
+        return new PaymentDetail()
         {
             Status = status,
             AuthorizationCode = new Guid(authorizationCode),
@@ -35,9 +35,9 @@ public static class ModelHelpers
         };
     }
     
-    public static PaymentDetails ToPaymentDetails(this PostPaymentResponse response)
+    public static PaymentDetail ToPaymentDetails(this PostPaymentResponse response)
     {
-        return new PaymentDetails()
+        return new PaymentDetail()
         {
             Status = response.Status,
             Currency = response.Currency,

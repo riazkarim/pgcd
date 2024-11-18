@@ -10,16 +10,16 @@ namespace PaymentGateway.Api.Services;
 /// </summary>
 public class PaymentsRepository : IPaymentsRepository
 {
-    private readonly ConcurrentDictionary<Guid, Persisted<Guid, PaymentDetails>> _payments = new();
+    private readonly ConcurrentDictionary<Guid, Persisted<Guid, PaymentDetail>> _payments = new();
     
-    public async Task<Persisted<Guid, PaymentDetails>> AddAsync(PaymentDetails payment)
+    public async Task<Persisted<Guid, PaymentDetail>> AddAsync(PaymentDetail payment)
     {
-        var pd = new Persisted<Guid, PaymentDetails>(Guid.NewGuid(), payment);
+        var pd = new Persisted<Guid, PaymentDetail>(Guid.NewGuid(), payment);
         _payments[pd.Id] = pd;
         return pd;
     }
 
-    public async Task<Persisted<Guid, PaymentDetails>> GetAsync(Guid id)
+    public async Task<Persisted<Guid, PaymentDetail>> GetAsync(Guid id)
     {
         await Task.FromResult(_payments.TryGetValue(id, out var pd));
         return pd;

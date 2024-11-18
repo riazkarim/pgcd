@@ -1,6 +1,6 @@
 namespace PaymentGateway.Api.Models.Data;
 
-public record PaymentDetails
+public record PaymentDetail
 {
     public string CardNumberLastFour { get; init; }
     public int ExpiryMonth { get; init; }

@@ -8,6 +8,6 @@ namespace PaymentGateway.Api.Services;
 /// </summary>
 public interface IPaymentsRepository
 {
-    Task<Persisted<Guid, PaymentDetails>> AddAsync(PaymentDetails pd);
-    Task<Persisted<Guid, PaymentDetails>> GetAsync(Guid id);
+    Task<Persisted<Guid, PaymentDetail>> AddAsync(PaymentDetail pd);
+    Task<Persisted<Guid, PaymentDetail>> GetAsync(Guid id);
 }
