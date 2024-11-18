@@ -1,18 +1,27 @@
-﻿using PaymentGateway.Api.Models.Responses;
+﻿using System.Collections.Concurrent;
+
+using PaymentGateway.Api.Data;
+using PaymentGateway.Api.Models.Data;
 
 namespace PaymentGateway.Api.Services;
 
-public class PaymentsRepository
+/// <summary>
+/// A local implementation using a concurrent dictionary to store payments.
+/// </summary>
+public class PaymentsRepository : IPaymentsRepository
 {
-    public List<PostPaymentResponse> Payments = new();
+    private readonly ConcurrentDictionary<Guid, Persisted<Guid, PaymentDetails>> _payments = new();
     
-    public void Add(PostPaymentResponse payment)
+    public async Task<Persisted<Guid, PaymentDetails>> AddAsync(PaymentDetails payment)
     {
-        Payments.Add(payment);
+        var pd = new Persisted<Guid, PaymentDetails>(Guid.NewGuid(), payment);
+        _payments[pd.Id] = pd;
+        return pd;
     }
 
-    public PostPaymentResponse Get(Guid id)
+    public async Task<Persisted<Guid, PaymentDetails>> GetAsync(Guid id)
     {
-        return Payments.FirstOrDefault(p => p.Id == id);
+        await Task.FromResult(_payments.TryGetValue(id, out var pd));
+        return pd;
     }
 }
