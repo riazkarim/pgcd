@@ -43,58 +43,53 @@ public class PaymentsController : Controller
     [HttpPost]
     public async Task<ActionResult<PostPaymentResponse?>> PostPaymentAsync(PostPaymentRequest request)
     {
+        PaymentStatus status;
+        AcquiringBankResponse abResponse = null;
+        Guid? id = null;
+        
         //Validate the model
         if (!ModelState.IsValid)
         {
-            return BadRequest(ModelState);
-        }
-
-        // Post it to the acquiring bank
-        PaymentStatus status;
-        AcquiringBankResponse abResponse = null;
-        try
-        {
-            abResponse = await _abService.PostPaymentAsync(request.ToAcquiringBankRequest());
-            if (abResponse.Authorized)
-            {
-                status = PaymentStatus.Authorized;
-            }
-            else
-            {
-                status = PaymentStatus.Declined;
-            }
-        }
-        catch (PaymentRejectedException ex)
-        {
-            _logger.LogError(ex, ex.Message);
+            // The submitted data in invalid. Set the return status to rejected.
             status = PaymentStatus.Rejected;
         }
+        else
+        {
+            // The model is valid, so post it to the acquiring bank and persist it.
+            try
+            {
+                abResponse = await _abService.PostPaymentAsync(request.ToAcquiringBankRequest());
+                if (abResponse.Authorized)
+                {
+                    status = PaymentStatus.Authorized;
+                }
+                else
+                {
+                    status = PaymentStatus.Declined;
+                }
+            }
+            catch (PaymentRejectedException ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                status = PaymentStatus.Rejected;
+            }
 
-        Guid? id = null;
-        try
-        {
-            // Store the result for future retrieval
-            id = (await _paymentsRepository.AddAsync(request.ToPaymentDetails(status,
-                abResponse?.AuthorizationCode))).Id;
-        }
-        catch (Exception ex)
-        {
-            // This is a critical error as the transaction may have been submitted to the acquiring bank, but the merchant might
-            // not have a way to retrieve these details. This kind of error should be alerted to the support team to investigate.
-            _logger.LogCritical(ex,
-                $"Error when persisting payment details to repository. This means something was submitted to the acquiring bank but may not be stored in the data store. Auth: {abResponse.Authorized}, AuthCode: {abResponse.AuthorizationCode}");
+            try
+            {
+                // Store the result for future retrieval
+                id = (await _paymentsRepository.AddAsync(request.ToPaymentDetails(status,
+                    abResponse?.AuthorizationCode))).Id;
+            }
+            catch (Exception ex)
+            {
+                // This is a critical error as the transaction may have been submitted to the acquiring bank, but the merchant might
+                // not have a way to retrieve these details. This kind of error should be alerted to the support team to investigate.
+                _logger.LogCritical(ex,
+                    $"Error when persisting payment details to repository. This means something was submitted to the acquiring bank but may not be stored in the data store. Auth: {abResponse.Authorized}, AuthCode: {abResponse.AuthorizationCode}");
+            }
         }
 
         // Return the result to the merchant
-        return new OkObjectResult(new PostPaymentResponse()
-        {
-            CardNumberLastFour = request.CardNumber.ToLastFour(),
-            ExpiryMonth = request.ExpiryMonth,
-            ExpiryYear = request.ExpiryYear,
-            Currency = request.Currency,
-            Amount = request.Amount,
-            Status = status,
-            Id = id
-        });
+        return new OkObjectResult(request.ToPostPaymentResponse(status, id));
     }
 }
