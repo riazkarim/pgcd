@@ -1,18 +1,11 @@
-# Instructions for candidates
+# Hello Checkout-ers!
 
-This is the .NET version of the Payment Gateway challenge. If you haven't already read this [README.md](https://github.com/cko-recruitment/) on the details of this exercise, please do so now. 
+This is my solution for your take-home exercise.
 
-## Template structure
-```
-src/
-    PaymentGateway.Api - a skeleton ASP.NET Core Web API
-test/
-    PaymentGateway.Api.Tests - an empty xUnit test project
-imposters/ - contains the bank simulator configuration. Don't change this
+It's fairly self-explanatory from the codes perspective, and I've added XML comments to explain any interfaces etc.
 
-.editorconfig - don't change this. It ensures a consistent set of rules for submissions when reformatting code
-docker-compose.yml - configures the bank simulator
-PaymentGateway.sln
-```
+I think one interesting point to discuss is the POST method on the PaymentsController method, namely what happens when we receive a POST request from the Merchant, post it to the acquiring bank, and then fail to persist it to our payment repository, meaning that the merchant would have no way to retrieve a record of the transaction for later reconciliation.
+In this case, we should alert this for L1 support as critical, as the data store may be inconsistent and require manual intervention to resolve.
 
-Feel free to change the structure of the solution, use a different test library etc.
+
+
