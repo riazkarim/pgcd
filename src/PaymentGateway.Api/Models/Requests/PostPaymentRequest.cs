@@ -2,26 +2,26 @@
 
 namespace PaymentGateway.Api.Models.Requests;
 
-public class PostPaymentRequest : IValidatableObject
+public record PostPaymentRequest : IValidatableObject
 {
     [Required]
     [Length(14, 19)]
-    [RegularExpression(@"^[0-9]$", ErrorMessage = "Card number should be numeric")]
-    public string CardNumber { get; set; }
+    [RegularExpression(@"^[0-9]+$", ErrorMessage = "Card number should be numeric")]
+    public string CardNumber { get; init; }
     [Required]
     [Range(1, 12)]
-    public int ExpiryMonth { get; set; }
+    public int ExpiryMonth { get; init; }
     [Required]
-    public int ExpiryYear { get; set; }
+    public int ExpiryYear { get; init; }
     [Required]
     [RegularExpression(@"^(USD|GBP|EUR)$", ErrorMessage = "Invalid currency should be one of USD/GBP/EUR")]
-    public string Currency { get; set; }
+    public string Currency { get; init; }
     [Required]
-    public int Amount { get; set; }
+    public int Amount { get; init; }
     [Required]
     [Length(3, 4)]
-    [RegularExpression(@"^[0-9]$", ErrorMessage = "Cvv should be numeric")]
-    public string Cvv { get; set; }
+    [RegularExpression(@"^[0-9]+$", ErrorMessage = "Cvv should be numeric")]
+    public string Cvv { get; init; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

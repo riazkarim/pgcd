@@ -39,7 +39,7 @@ public class PaymentsController : Controller
     }
 
     [HttpPost]
-    public async Task<ActionResult<PostPaymentResponse?>> PostPaymentAsync(PostPaymentRequest request)
+    public async Task<ActionResult<PostPaymentResponse?>> PostPaymentAsync([FromBody] PostPaymentRequest request)
     {
         PaymentStatus status;
         AcquiringBankResponse abResponse = null;

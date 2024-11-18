@@ -22,10 +22,12 @@ public static class ModelHelpers
     public static PaymentDetail ToPaymentDetails(this PostPaymentRequest request, PaymentStatus status,
         string authorizationCode)
     {
+        Guid.TryParse(authorizationCode, out var authCode);
+        
         return new PaymentDetail()
         {
             Status = status,
-            AuthorizationCode = new Guid(authorizationCode),
+            AuthorizationCode = authCode,
             Currency = request.Currency,
             Amount = request.Amount,
             CardNumberLastFour = request.CardNumber.ToLastFour(),

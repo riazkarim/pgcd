@@ -24,6 +24,6 @@ public class PaymentRepositoryTests
         var id = await _paymentsRepository.AddAsync(pd);
         var repod = await _paymentsRepository.GetAsync(id.Id);
         
-        Assert.That(pd, Is.EqualTo(repod.Value));
+        Assert.That(pd, Is.EqualTo(repod));
     }
 }

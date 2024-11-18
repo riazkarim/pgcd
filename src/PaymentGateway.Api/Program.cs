@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Mvc;
+
 using PaymentGateway.Api.Configuration;
 using PaymentGateway.Api.Services;
 
@@ -13,6 +15,12 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IPaymentsRepository, PaymentsRepository>();
 builder.Services.AddSingleton<IAcquiringBankService, AcquiringBankWebService>();
 builder.Services.AddSingleton<PaymentGatewayConfiguration>();
+
+builder.Services.Configure<ApiBehaviorOptions>(options =>
+{
+    // This is required to stop the Controller action automatically returning a 400 on model validation errors
+    options.SuppressModelStateInvalidFilter = true;
+});
 
 var app = builder.Build();
 

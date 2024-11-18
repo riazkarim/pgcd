@@ -1,4 +1,3 @@
-using PaymentGateway.Api.Data;
 using PaymentGateway.Api.Models.Data;
 
 namespace PaymentGateway.Api.Services;
@@ -8,6 +7,6 @@ namespace PaymentGateway.Api.Services;
 /// </summary>
 public interface IPaymentsRepository
 {
-    Task<Persisted<Guid, PaymentDetail>> AddAsync(PaymentDetail pd);
-    Task<Persisted<Guid, PaymentDetail>> GetAsync(Guid id);
+    Task<PersistedPaymentDetail> AddAsync(PaymentDetail pd);
+    Task<PersistedPaymentDetail> GetAsync(Guid id);
 }

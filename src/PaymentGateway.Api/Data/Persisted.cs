@@ -1,13 +1,6 @@
-namespace PaymentGateway.Api.Data;
+namespace PaymentGateway.Api.Models.Data;
 
-public class Persisted<K, V>
+public record PersistedPaymentDetail : PaymentDetail
 {
-    public Persisted(K id, V value)
-    {
-        Id = id;
-        Value = value;
-    }
-
-    public K Id { get; }
-    public V Value { get; }
+    public Guid Id { get; init; }
 }

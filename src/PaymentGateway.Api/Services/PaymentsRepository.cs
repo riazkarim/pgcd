@@ -1,6 +1,5 @@
 ﻿using System.Collections.Concurrent;
 
-using PaymentGateway.Api.Data;
 using PaymentGateway.Api.Models.Data;
 
 namespace PaymentGateway.Api.Services;
@@ -10,16 +9,27 @@ namespace PaymentGateway.Api.Services;
 /// </summary>
 public class PaymentsRepository : IPaymentsRepository
 {
-    private readonly ConcurrentDictionary<Guid, Persisted<Guid, PaymentDetail>> _payments = new();
+    private readonly ConcurrentDictionary<Guid, PersistedPaymentDetail> _payments = new();
     
-    public async Task<Persisted<Guid, PaymentDetail>> AddAsync(PaymentDetail payment)
+    public async Task<PersistedPaymentDetail> AddAsync(PaymentDetail payment)
     {
-        var pd = new Persisted<Guid, PaymentDetail>(Guid.NewGuid(), payment);
+        var pd = new PersistedPaymentDetail
+        {
+            Id = Guid.NewGuid(), 
+            Amount = payment.Amount,
+            Currency = payment.Currency,
+            Cvv = payment.Cvv,
+            Status = payment.Status,
+            AuthorizationCode = payment.AuthorizationCode,
+            ExpiryMonth = payment.ExpiryMonth,
+            ExpiryYear = payment.ExpiryYear,
+            CardNumberLastFour = payment.CardNumberLastFour
+        };
         _payments[pd.Id] = pd;
         return pd;
     }
 
-    public async Task<Persisted<Guid, PaymentDetail>> GetAsync(Guid id)
+    public async Task<PersistedPaymentDetail> GetAsync(Guid id)
     {
         await Task.FromResult(_payments.TryGetValue(id, out var pd));
         return pd;

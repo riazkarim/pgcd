@@ -32,10 +32,21 @@ public class TestObjects
 
     public static PostPaymentRequest InvalidPostPaymentRequest = new PostPaymentRequest()
     {
-        ExpiryYear = DateTime.Today.Year - 1, //Year older than today
+        ExpiryYear = DateTime.Today.Year - 1,
         ExpiryMonth = _random.Next(1, 12),
         Amount = _random.Next(1, 10000),
-        CardNumber = _random.Next(1111, 999999999).ToString(), //Invalid card number
-        Currency = "GBP"
+        CardNumber = _random.Next(1000000, 9999999).ToString("D7") + _random.Next(1000000, 9999999).ToString("D7"), //Invalid card number
+        Currency = "GBP",
+        Cvv = _random.Next(999).ToString("D3")
+    };
+    
+    public static PostPaymentRequest PostPaymentRequest = new PostPaymentRequest()
+    {
+        ExpiryYear = DateTime.Today.Year + 1,
+        ExpiryMonth = _random.Next(1, 12),
+        Amount = _random.Next(1, 10000),
+        CardNumber = _random.Next(1000000, 9999999).ToString("D7") + _random.Next(1000000, 9999999).ToString("D7"), //Invalid card number
+        Currency = "GBP",
+        Cvv = _random.Next(999).ToString("D3")
     };
 }
