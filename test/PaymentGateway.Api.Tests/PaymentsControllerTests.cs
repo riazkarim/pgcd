@@ -9,11 +9,11 @@ using Moq;
 using NUnit.Framework;
 
 using PaymentGateway.Api.Controllers;
-using PaymentGateway.Api.Helpers;
 using PaymentGateway.Api.Models;
 using PaymentGateway.Api.Models.Requests;
 using PaymentGateway.Api.Models.Responses;
 using PaymentGateway.Api.Services;
+using PaymentGateway.Api.Services.Exceptions;
 
 namespace PaymentGateway.Api.Tests;
 
@@ -36,7 +36,7 @@ public class PaymentsControllerTests
             .CreateClient();
 
         // Act
-        var response = await client.GetAsync($"/api/Payments/{ppd.Id}");
+        var response = await client.GetAsync($"/api/payments/{ppd.Id}");
         var paymentResponse = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
         
         // Assert
@@ -52,7 +52,7 @@ public class PaymentsControllerTests
         var client = webApplicationFactory.CreateClient();
         
         // Act
-        var response = await client.GetAsync($"/api/Payments/{Guid.NewGuid()}");
+        var response = await client.GetAsync($"/api/payments/{Guid.NewGuid()}");
         
         // Assert
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.NotFound));
@@ -61,12 +61,13 @@ public class PaymentsControllerTests
     [Test]
     public async Task Should_ReturnRejectedStatus_IfInvalidModel()
     {
+        var prMock = new Mock<IPaymentsRepository>();
         var abMock = new Mock<IAcquiringBankService>();
         
-        HttpClient client = GetClient(abMock.Object);
+        HttpClient client = GetClient(prMock.Object, abMock.Object);
 
         // Act
-        var response = await client.PostAsJsonAsync($"/api/payments", TestObjects.InvalidPostPaymentRequest);
+        var response = await client.PostAsJsonAsync($"/api/payments", TestObjects.InvalidPostPaymentRequest_Expiry);
         Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         var responseBody = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
         Assert.That(responseBody.Status, Is.EqualTo(PaymentStatus.Rejected));
@@ -75,11 +76,12 @@ public class PaymentsControllerTests
     [Test]
     public async Task Should_ReturnResponse_IfAuthorized()
     {
+        var prMock = new Mock<IPaymentsRepository>();
         var abMock = new Mock<IAcquiringBankService>();
         abMock.Setup(a => a.PostPaymentAsync(It.IsAny<AcquiringBankRequest>())).ReturnsAsync(
             new AcquiringBankResponse() {Authorized = true, AuthorizationCode = Guid.NewGuid().ToString()});
         
-        HttpClient client = GetClient(abMock.Object);
+        HttpClient client = GetClient(prMock.Object, abMock.Object);
 
         // Act
         var response = await client.PostAsJsonAsync($"/api/payments", TestObjects.PostPaymentRequest);
@@ -87,14 +89,28 @@ public class PaymentsControllerTests
         var responseBody = await response.Content.ReadFromJsonAsync<PostPaymentResponse>();
         Assert.That(responseBody.Status, Is.EqualTo(PaymentStatus.Authorized));
     }
+    
+    [Test]
+    public async Task Should_ReturnError_IfBankCallFails()
+    {
+        var prMock = new Mock<IPaymentsRepository>();
+        var abMock = new Mock<IAcquiringBankService>();
+        abMock.Setup(a => a.PostPaymentAsync(It.IsAny<AcquiringBankRequest>())).Throws<AcquiringBankUnavailableException>();
+        
+        HttpClient client = GetClient(prMock.Object, abMock.Object);
 
-    private static HttpClient GetClient(IAcquiringBankService abMock)
+        // Act
+        var response = await client.PostAsJsonAsync($"/api/payments", TestObjects.PostPaymentRequest);
+        Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.InternalServerError));
+    }
+
+    private static HttpClient GetClient(IPaymentsRepository pr, IAcquiringBankService abs)
     {
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.WithWebHostBuilder(builder =>
                 builder.ConfigureServices(services => ((ServiceCollection)services)
-                    .AddSingleton<IPaymentsRepository>(new PaymentsRepository())
-                    .AddSingleton<IAcquiringBankService>(abMock)))
+                    .AddSingleton<IPaymentsRepository>(pr)
+                    .AddSingleton<IAcquiringBankService>(abs)))
             .CreateClient();
         return client;
     }

@@ -1,0 +1,268 @@
+{
+  "collection": {
+    "info": {
+      "_postman_id": "e7f4aaa0-1fe0-4c6b-a0c8-d1496bc4af33",
+      "name": "Checkout.com TH",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+      "updatedAt": "2024-11-19T11:12:25.000Z",
+      "createdAt": "2024-11-19T11:03:41.000Z",
+      "lastUpdatedBy": "1633795",
+      "uid": "1633795-e7f4aaa0-1fe0-4c6b-a0c8-d1496bc4af33"
+    },
+    "item": [
+      {
+        "name": "POST - Authorized",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "2c5b3ceb-f9b0-4dc3-9826-64dc606e2ff5",
+              "exec": [
+                "pm.test(\"Response status code is 200\", function () {",
+                "    pm.expect(pm.response.code).to.equal(200);",
+                "});",
+                "",
+                "pm.test(\"Status to be Authorized\", function () {",
+                "    const responseData = pm.response.json();",
+                "    pm.expect(responseData.status).to.be.equal(0)",
+                "});",
+                "",
+                "pm.test(\"Response has the required fields\", function () {",
+                "    const responseData = pm.response.json();",
+                "    ",
+                "    pm.expect(responseData).to.be.an('object');",
+                "    pm.expect(responseData).to.have.property('id');",
+                "    pm.expect(responseData).to.have.property('status');",
+                "    pm.expect(responseData).to.have.property('cardNumberLastFour');",
+                "    pm.expect(responseData).to.have.property('expiryMonth');",
+                "    pm.expect(responseData).to.have.property('expiryYear');",
+                "    pm.expect(responseData).to.have.property('currency');",
+                "    pm.expect(responseData).to.have.property('amount');",
+                "});",
+                "",
+                "",
+                "pm.test(\"Card number last four digits are in a valid format\", function () {",
+                "  const responseData = pm.response.json();",
+                "  ",
+                "  pm.expect(responseData.cardNumberLastFour).to.be.a('string');",
+                "  pm.expect(responseData.cardNumberLastFour).to.match(/^\\d{4}$/);",
+                "});",
+                "",
+                "",
+                "pm.test(\"Expiry month and year are valid integers\", function () {",
+                "  const responseData = pm.response.json();",
+                "  ",
+                "  pm.expect(responseData).to.be.an('object');",
+                "  pm.expect(responseData.expiryMonth).to.be.a('number', \"Expiry month should be a number\");",
+                "  pm.expect(responseData.expiryYear).to.be.a('number', \"Expiry year should be a number\");",
+                "});",
+                "",
+                "",
+                "pm.test(\"Response time is less than 200ms\", function () {",
+                "  pm.expect(pm.response.responseTime).to.be.below(200);",
+                "});",
+                ""
+              ],
+              "type": "text/javascript",
+              "packages": {}
+            }
+          }
+        ],
+        "id": "d446df8b-5ce5-4191-886b-d0af7603c0ad",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"cardNumber\": \"2222405343248877\",\n  \"expiryMonth\": 4,\n  \"expiryYear\": 2025,\n  \"currency\": \"GBP\",\n  \"amount\": 100,\n  \"cvv\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "http://localhost:5067/api/payments",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "5067",
+            "path": [
+              "api",
+              "payments"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "1633795-d446df8b-5ce5-4191-886b-d0af7603c0ad"
+      },
+      {
+        "name": "POST - Rejected",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "2c5b3ceb-f9b0-4dc3-9826-64dc606e2ff5",
+              "exec": [
+                "pm.test(\"Response status code is 200\", function () {",
+                "    pm.expect(pm.response.code).to.equal(200);",
+                "});",
+                "",
+                "pm.test(\"Status to be Rejected\", function () {",
+                "    const responseData = pm.response.json();",
+                "    pm.expect(responseData.status).to.be.equal(2)",
+                "});",
+                "",
+                "pm.test(\"Response has the required fields\", function () {",
+                "    const responseData = pm.response.json();",
+                "    ",
+                "    pm.expect(responseData).to.be.an('object');",
+                "    pm.expect(responseData).to.have.property('id');",
+                "    pm.expect(responseData).to.have.property('status');",
+                "    pm.expect(responseData).to.have.property('cardNumberLastFour');",
+                "    pm.expect(responseData).to.have.property('expiryMonth');",
+                "    pm.expect(responseData).to.have.property('expiryYear');",
+                "    pm.expect(responseData).to.have.property('currency');",
+                "    pm.expect(responseData).to.have.property('amount');",
+                "});",
+                "",
+                "",
+                "pm.test(\"Card number last four digits are in a valid format\", function () {",
+                "  const responseData = pm.response.json();",
+                "  ",
+                "  pm.expect(responseData.cardNumberLastFour).to.be.a('string');",
+                "  pm.expect(responseData.cardNumberLastFour).to.match(/^\\d{4}$/);",
+                "});",
+                "",
+                "",
+                "pm.test(\"Expiry month and year are valid integers\", function () {",
+                "  const responseData = pm.response.json();",
+                "  ",
+                "  pm.expect(responseData).to.be.an('object');",
+                "  pm.expect(responseData.expiryMonth).to.be.a('number', \"Expiry month should be a number\");",
+                "  pm.expect(responseData.expiryYear).to.be.a('number', \"Expiry year should be a number\");",
+                "});",
+                "",
+                "",
+                "pm.test(\"Response time is less than 200ms\", function () {",
+                "  pm.expect(pm.response.responseTime).to.be.below(200);",
+                "});",
+                ""
+              ],
+              "type": "text/javascript",
+              "packages": {}
+            }
+          }
+        ],
+        "id": "45537371-4fc4-490f-94da-5c8bc3acfa08",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"cardNumber\": \"123\",\n  \"expiryMonth\": 4,\n  \"expiryYear\": 2025,\n  \"currency\": \"GBP\",\n  \"amount\": 100,\n  \"cvv\": \"123\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "http://localhost:5067/api/payments",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "5067",
+            "path": [
+              "api",
+              "payments"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "1633795-45537371-4fc4-490f-94da-5c8bc3acfa08"
+      },
+      {
+        "name": "POST - Declined",
+        "event": [
+          {
+            "listen": "test",
+            "script": {
+              "id": "a25aa66c-1cc9-4556-b9e1-6102f6f89452",
+              "exec": [
+                "pm.test(\"Response status code is 200\", function () {",
+                "    pm.response.to.have.status(200);",
+                "});",
+                "",
+                "pm.test(\"Status to be Declined\", function () {",
+                "    const responseData = pm.response.json();",
+                "    pm.expect(responseData.status).to.be.equal(1)",
+                "});",
+                "",
+                "pm.test(\"Response time is less than 200ms\", function () {",
+                "  pm.expect(pm.response.responseTime).to.be.below(200);",
+                "});",
+                "",
+                "",
+                "pm.test(\"Validate the response schema for required fields\", function () {",
+                "  const responseData = pm.response.json();",
+                "  ",
+                "  pm.expect(responseData).to.be.an('object');",
+                "  pm.expect(responseData).to.have.property('id');",
+                "  pm.expect(responseData).to.have.property('status');",
+                "  pm.expect(responseData).to.have.property('cardNumberLastFour');",
+                "  pm.expect(responseData).to.have.property('expiryMonth');",
+                "  pm.expect(responseData).to.have.property('expiryYear');",
+                "  pm.expect(responseData).to.have.property('currency');",
+                "  pm.expect(responseData).to.have.property('amount');",
+                "});",
+                ""
+              ],
+              "type": "text/javascript",
+              "packages": {}
+            }
+          }
+        ],
+        "id": "ace66e46-d599-436a-ad70-a8e8d10a00a6",
+        "protocolProfileBehavior": {
+          "disableBodyPruning": true
+        },
+        "request": {
+          "method": "POST",
+          "header": [],
+          "body": {
+            "mode": "raw",
+            "raw": "{\n  \"cardNumber\": \"2222405343248112\",\n  \"expiryMonth\": 1,\n  \"expiryYear\": 2026,\n  \"currency\": \"USD\",\n  \"amount\": 60000,\n  \"cvv\": \"456\"\n}",
+            "options": {
+              "raw": {
+                "language": "json"
+              }
+            }
+          },
+          "url": {
+            "raw": "http://localhost:5067/api/payments",
+            "protocol": "http",
+            "host": [
+              "localhost"
+            ],
+            "port": "5067",
+            "path": [
+              "api",
+              "payments"
+            ]
+          }
+        },
+        "response": [],
+        "uid": "1633795-ace66e46-d599-436a-ad70-a8e8d10a00a6"
+      }
+    ]
+  }
+}

@@ -37,19 +37,6 @@ public static class ModelHelpers
         };
     }
     
-    public static PaymentDetail ToPaymentDetails(this PostPaymentResponse response)
-    {
-        return new PaymentDetail()
-        {
-            Status = response.Status,
-            Currency = response.Currency,
-            Amount = response.Amount,
-            CardNumberLastFour = response.CardNumberLastFour,
-            ExpiryMonth = response.ExpiryMonth,
-            ExpiryYear = response.ExpiryYear
-        };
-    }
-
     public static PostPaymentResponse ToPostPaymentResponse(this PostPaymentRequest request, PaymentStatus status, Guid? id)
     {
         return new PostPaymentResponse()
@@ -66,6 +53,13 @@ public static class ModelHelpers
 
     public static string ToLastFour(this string cardNumber)
     {
-        return cardNumber.Substring(cardNumber.Length - 4, 4);
+        if (cardNumber.Length < 4)
+        {
+            return cardNumber;
+        }
+        else
+        {
+            return cardNumber.Substring(cardNumber.Length - 4, 4);
+        }
     }
 }

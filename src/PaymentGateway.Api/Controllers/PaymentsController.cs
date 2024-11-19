@@ -66,7 +66,7 @@ public class PaymentsController : Controller
                     status = PaymentStatus.Declined;
                 }
             }
-            catch (AcquiringBankUnavailable ex)
+            catch (AcquiringBankUnavailableException ex)
             {
                 _logger.LogCritical(ex, ex.Message);
                 // If we can't reach the acquiring bank, we return the error to the merchant, as this is a critical non-recoverable failure

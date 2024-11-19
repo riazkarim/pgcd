@@ -27,15 +27,27 @@ public class TestObjects
         ExpiryMonth = _random.Next(1, 12),
         Amount = _random.Next(1, 10000),
         CardNumberLastFour = _random.Next(1111, 9999).ToString(),
-        Currency = "GBP"
+        Currency = "GBP",
+        Status = PaymentStatus.Authorized,
+        Id = Guid.NewGuid()
     };
 
-    public static PostPaymentRequest InvalidPostPaymentRequest = new PostPaymentRequest()
+    public static PostPaymentRequest InvalidPostPaymentRequest_Expiry = new PostPaymentRequest()
     {
-        ExpiryYear = DateTime.Today.Year - 1,
+        ExpiryYear = DateTime.Today.Year - 1, //Old expiry
         ExpiryMonth = _random.Next(1, 12),
         Amount = _random.Next(1, 10000),
-        CardNumber = _random.Next(1000000, 9999999).ToString("D7") + _random.Next(1000000, 9999999).ToString("D7"), //Invalid card number
+        CardNumber = _random.Next(1000000, 9999999).ToString("D7") + _random.Next(1000000, 9999999).ToString("D7"),
+        Currency = "GBP",
+        Cvv = _random.Next(999).ToString("D3")
+    };
+    
+    public static PostPaymentRequest InvalidPostPaymentRequest_CardNumber = new PostPaymentRequest()
+    {
+        ExpiryYear = DateTime.Today.Year + 1,
+        ExpiryMonth = _random.Next(1, 12),
+        Amount = _random.Next(1, 10000),
+        CardNumber = _random.Next(1000000, 9999999).ToString("D7"), //Invalid card number
         Currency = "GBP",
         Cvv = _random.Next(999).ToString("D3")
     };

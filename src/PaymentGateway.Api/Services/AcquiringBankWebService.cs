@@ -32,7 +32,7 @@ public class AcquiringBankWebService : IAcquiringBankService
         catch (FlurlHttpException ex)
         {
             _logger.LogError(ex, ex.Message);
-            throw new AcquiringBankUnavailable();
+            throw new AcquiringBankUnavailableException();
         }
     }
 }

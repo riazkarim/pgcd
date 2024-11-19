@@ -17,6 +17,7 @@ public record PostPaymentRequest : IValidatableObject
     [RegularExpression(@"^(USD|GBP|EUR)$", ErrorMessage = "Invalid currency should be one of USD/GBP/EUR")]
     public string Currency { get; init; }
     [Required]
+    [Range(1, int.MaxValue)]
     public int Amount { get; init; }
     [Required]
     [Length(3, 4)]

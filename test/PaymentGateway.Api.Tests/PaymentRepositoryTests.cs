@@ -21,9 +21,9 @@ public class PaymentRepositoryTests
     public async Task Should_StoreAndRetrievePayment()
     {
         var pd = TestObjects.PaymentDetail;
-        var id = await _paymentsRepository.AddAsync(pd);
-        var repod = await _paymentsRepository.GetAsync(id.Id);
+        var ppd = await _paymentsRepository.AddAsync(pd);
+        var repod = await _paymentsRepository.GetAsync(ppd.Id);
         
-        Assert.That(pd, Is.EqualTo(repod));
+        Assert.That(ppd, Is.EqualTo(repod));
     }
 }
