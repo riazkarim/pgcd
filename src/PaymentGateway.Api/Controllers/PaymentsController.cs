@@ -41,7 +41,7 @@ public class PaymentsController : Controller
     [HttpPost]
     public async Task<ActionResult<PostPaymentResponse?>> PostPaymentAsync([FromBody] PostPaymentRequest request)
     {
-        PaymentStatus status;
+        PaymentStatus status = PaymentStatus.Rejected; //Set this to a safe default state
         AcquiringBankResponse abResponse = null;
         Guid? id = null;
         

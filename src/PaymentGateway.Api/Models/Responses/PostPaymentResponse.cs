@@ -3,7 +3,7 @@
 public record PostPaymentResponse
 {
     public Guid? Id { get; init; }
-    public PaymentStatus Status { get; init; }
+    public PaymentStatus Status { get; init; } = PaymentStatus.Rejected;
     public string CardNumberLastFour { get; init; }
     public int ExpiryMonth { get; init; }
     public int ExpiryYear { get; init; }

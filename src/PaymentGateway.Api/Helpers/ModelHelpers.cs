@@ -20,7 +20,7 @@ public static class ModelHelpers
     }
 
     public static PaymentDetail ToPaymentDetails(this PostPaymentRequest request, PaymentStatus status,
-        string authorizationCode)
+        string? authorizationCode)
     {
         Guid.TryParse(authorizationCode, out var authCode);
         
