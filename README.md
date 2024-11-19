@@ -4,9 +4,11 @@ This is my solution for your take-home exercise.
 
 It's fairly self-explanatory, and I've added comments to explain any interfaces etc.
 
-I think one interesting point to discuss is the POST method on the PaymentsController method, namely what happens when we receive a POST request from the Merchant, post it to the acquiring bank, and then fail to persist it to our payment repository, meaning that the merchant would have no way to retrieve a record of the transaction for later reconciliation. If this occurs, we should alert this for L1 support as critical, as the data store may be inconsistent and require additional intervention.
-
 ## Technical Considerations
+
+### Distributed transaction considerations
+
+I think one interesting point to discuss is the POST method on the PaymentsController method, namely what happens when we receive a POST request from the Merchant, post it to the acquiring bank, and then fail to persist it to our payment repository, meaning that the merchant would have no way to retrieve a record of the transaction for later reconciliation. If this occurs, we should alert this for L1 support as critical, as the data store may be inconsistent and require additional intervention. An option might be that we try and rollback the acquiring bank transaction if we fail to persist it, but this could potentially make things worse.
 
 ### Async programming
 
@@ -31,5 +33,3 @@ Returning Rejected to the Merchant without giving additional feedback might not 
 ## Test commands for Postman
 
 Attached in additional file PostmanTests.json for Postman with some tests for the responses for Authorized, Declined, and Rejected transactions.
-
-
